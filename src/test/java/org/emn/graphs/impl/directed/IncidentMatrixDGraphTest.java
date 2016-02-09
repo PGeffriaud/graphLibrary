@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
 
 /**
  * Created by pierreg on 09/02/16.
- * Test class
+ * Classe de test pour IncidentMatrixDGraph
  */
-public class AdjencyListDGraphTest {
+public class IncidentMatrixDGraphTest {
 
     private IDirectedGraph graph;
     private int[][] matrix = {{0, 0, 1, 1, 1},
@@ -29,7 +29,7 @@ public class AdjencyListDGraphTest {
 
     @Before
     public void setUp(){
-        graph = new AdjencyListDGraph(matrix);
+        graph = new IncidentMatrixDGraph(matrix);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class AdjencyListDGraphTest {
     }
 
     @Test
-    public void testIsEdge() throws Exception {
+    public void testisArc() throws Exception {
         assertTrue(graph.isArc(0,2));
         assertFalse(graph.isArc(4,4));
     }
@@ -83,6 +83,11 @@ public class AdjencyListDGraphTest {
         assertThat(resultMatrix, is(expectedMatrix));
     }
 
+    @Test
+    public void testGetGraph(){
+        int[][] resultMatrix = graph.getGraph();
+        assertThat(resultMatrix, is(matrix));
+    }
 
     @Test
     public void testRandom() throws GraphFactoryException {
@@ -90,7 +95,8 @@ public class AdjencyListDGraphTest {
         int order = random.nextInt(40)+1;
         int maxEdge = order * (order - 1);
         int nbEdge = (maxEdge > 0) ? random.nextInt(maxEdge) : 0;
-        graph = new AdjencyListDGraph(GraphFactory.createRandomMatrix(order, nbEdge, true));
+        int poidsMax = random.nextInt(10)+1;
+        graph = new IncidentMatrixDGraph(GraphFactory.createRandomMatrix(order, nbEdge, true));
 
         assertThat(graph.addNode(), is(order));
         int randomVertex = random.nextInt(order);

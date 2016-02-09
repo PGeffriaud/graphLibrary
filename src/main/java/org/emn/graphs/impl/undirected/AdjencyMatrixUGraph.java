@@ -19,7 +19,7 @@ public class AdjencyMatrixUGraph implements IUndirectedGraph {
 
     @Override
     public boolean isEdge(int x, int y) {
-        return adjencyMatrix[x][y] == 1 && adjencyMatrix[y][x] != 1;
+        return adjencyMatrix[x][y] == 1 && adjencyMatrix[y][x] == 1;
     }
 
     @Override

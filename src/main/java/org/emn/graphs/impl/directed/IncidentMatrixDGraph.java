@@ -20,7 +20,7 @@ public class IncidentMatrixDGraph implements IDirectedGraph {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
                 if(matrix[i][j] != 0){
-                    int[] col = new int[getOrder()];
+                    int[] col = new int[matrix.length];
                     col[i] = -1*matrix[i][j];
                     col[j] = matrix[i][j];
                     incidentMatrix.add(col);
@@ -76,7 +76,7 @@ public class IncidentMatrixDGraph implements IDirectedGraph {
 
     @Override
     public int getOrder() {
-        return incidentMatrix.size();
+        return incidentMatrix.get(0).length;
     }
 
     @Override

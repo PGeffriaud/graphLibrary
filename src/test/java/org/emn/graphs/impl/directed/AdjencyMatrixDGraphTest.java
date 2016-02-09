@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
 
 /**
  * Created by pierreg on 09/02/16.
- * Test class
+ * Classe de test de la classe AdjencyMatrixDGraph
  */
-public class AdjencyListDGraphTest {
+public class AdjencyMatrixDGraphTest {
 
     private IDirectedGraph graph;
     private int[][] matrix = {{0, 0, 1, 1, 1},
@@ -29,23 +29,29 @@ public class AdjencyListDGraphTest {
 
     @Before
     public void setUp(){
-        graph = new AdjencyListDGraph(matrix);
+        graph = new AdjencyMatrixDGraph(matrix);
     }
 
     @Test
-    public void testAddVertex() throws Exception {
+    public void testAddVertex() {
         int val = graph.addNode();
         assertEquals(val, 5);
     }
 
     @Test
-    public void testIsEdge() throws Exception {
+    public void testGetGraph(){
+        int[][] resultMatrix = graph.getGraph();
+        assertThat(resultMatrix, is(matrix));
+    }
+
+    @Test
+    public void testIsEdge() {
         assertTrue(graph.isArc(0,2));
         assertFalse(graph.isArc(4,4));
     }
 
     @Test
-    public void testGetSuccessors() throws Exception {
+    public void testGetSuccessors() {
         List<Integer> resultList = graph.getSuccessors(3);
         Integer[] succ = {1,2,4};
         List<Integer> expectedList = Arrays.asList(succ);
@@ -53,7 +59,7 @@ public class AdjencyListDGraphTest {
     }
 
     @Test
-    public void testGetPredecessors() throws Exception {
+    public void testGetPredecessors() {
         List<Integer> resultList = graph.getPredecessors(3);
         Integer[] pred = {0,1,2};
         List<Integer> expectedList = Arrays.asList(pred);
@@ -61,13 +67,13 @@ public class AdjencyListDGraphTest {
     }
 
     @Test
-    public void testRemoveEdge() throws Exception {
+    public void testRemoveEdge() {
         graph.removeArc(0,2);
         assertFalse(graph.isArc(0,2));
     }
 
     @Test
-    public void testAddEdge() throws Exception {
+    public void testAddEdge() {
         graph.addArc(4,3);
         assertTrue(graph.isArc(4,3));
     }
@@ -83,14 +89,13 @@ public class AdjencyListDGraphTest {
         assertThat(resultMatrix, is(expectedMatrix));
     }
 
-
     @Test
     public void testRandom() throws GraphFactoryException {
         Random random = new Random();
         int order = random.nextInt(40)+1;
         int maxEdge = order * (order - 1);
         int nbEdge = (maxEdge > 0) ? random.nextInt(maxEdge) : 0;
-        graph = new AdjencyListDGraph(GraphFactory.createRandomMatrix(order, nbEdge, true));
+        graph = new AdjencyMatrixDGraph(GraphFactory.createRandomMatrix(order, nbEdge, true));
 
         assertThat(graph.addNode(), is(order));
         int randomVertex = random.nextInt(order);

@@ -12,57 +12,88 @@ import java.util.List;
 public class AdjencyListUGraph implements IUndirectedGraph {
 
     /** Structure correspondant à la liste d'adjacence du graphe */
-    private List<Integer> node, succ;
+    int[] node;
+    List<Integer> succ;
 
     public AdjencyListUGraph(int[][] adjencyMatrix){
-        IUndirectedGraph adjencyGraph = new AdjencyMatrixUGraph(adjencyMatrix);
-
-        this.node = new ArrayList<>();
-        this.succ = new ArrayList<>();
-
-        int newIndex = 0;
-        for (int i = 0; i < adjencyMatrix.length; i++) {
-            List<Integer> listeVoisins = adjencyGraph.getNeighbors(i);
-            node.add(newIndex);
-            succ.addAll(listeVoisins);
-            newIndex += listeVoisins.size();
+        node = new int[adjencyMatrix.length +1];
+        succ = new ArrayList<>();
+        for(int i = 0; i < adjencyMatrix.length; i++){
+            node[i] = succ.size();
+            for(int j = 0; j < adjencyMatrix.length; j++){
+                if(adjencyMatrix[i][j] == 1){
+                    succ.add(j);
+                }
+            }
         }
+        node[adjencyMatrix.length] = succ.size();
     }
 
     @Override
     public void removeEdge(int x, int y) {
-        int indexToRemove = node.get(x) + getNeighbors(x).indexOf(y);
-        succ.remove(indexToRemove);
-        for (int i = x+1; i < node.size(); i++) {
-            node.set(i,node.get(i)-1);
+        if(isEdge(x, y)){
+            removeDirectedArc(x, y);
+            removeDirectedArc(y, x);
         }
-        removeEdge(y,x);
+    }
+
+    private void removeDirectedArc(int x, int y){
+        boolean hasBeenRemoved = false;
+        for(int i = node[x]; i < node[x+1]; i++){
+            if(!hasBeenRemoved && succ.get(i) == y){
+                succ.remove(i);
+                hasBeenRemoved = true;
+            }
+        }
+        if(hasBeenRemoved){
+            for(int i = x+1; i < node.length; i++){
+                node[i]--;
+            }
+        }
     }
 
     @Override
     public void addEdge(int x, int y) {
-        succ.add(node.get(x), y);
-        for (int i = x+1; i < node.size(); i++) {
-            node.set(i, node.get(i)+1);
+        if(x != y){
+            addDirectedArc(x, y);
+            addDirectedArc(y, x);
         }
-        addEdge(y,x);
+    }
+
+    private void addDirectedArc(int x, int y){
+        if(!isEdge(x, y)){
+            succ.add(node[x+1], y);
+            for(int i = x+1; i < node.length; i++){
+                node[i]++;
+            }
+        }
     }
 
     @Override
     public List<Integer> getNeighbors(int x) {
-        int indexBegin = node.get(x);
-        int indexEnd = (node.size() > x+1) ? node.get(x+1) : succ.size();
-        return succ.subList(indexBegin, indexEnd);
+        int nb = node[x+1]-node[x];
+        List<Integer> neighbors = new ArrayList<>();
+        for(int i = 0; i < nb; i++){
+            neighbors.add(succ.get(node[x]+i));
+        }
+        return neighbors;
     }
 
     @Override
     public int getOrder() {
-        return node.size();
+        return node.length;
     }
 
     @Override
     public int addNode() {
-        node.add(succ.size());
-        return getOrder()-1;
+        List<Integer> newNodes = new ArrayList<>();
+        for (int aNode : node) {
+            newNodes.add(aNode);
+        }
+
+        newNodes.add(succ.size());
+        node = newNodes.stream().mapToInt(i->i).toArray();
+        return node.length-2;
     }
+
 }
